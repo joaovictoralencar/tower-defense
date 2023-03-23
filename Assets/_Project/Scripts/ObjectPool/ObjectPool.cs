@@ -26,6 +26,7 @@ namespace ObjectPool
             _prefab = prefab;
             ActiveObjectsCount = 0;
             _pool = new List<T>(initialSize);
+            _parent = parent;
             for (int i = 0; i < initialSize; i++)
             {
                 InitializeObject();
@@ -41,12 +42,12 @@ namespace ObjectPool
             OnObjectSpawn?.Invoke(obj);
         }
 
-        public void ActivateObject(Vector3 position = default, Quaternion rotation = default)
+        public T ActivateObject(Vector3 position = default, Quaternion rotation = default)
         {
             //Get inactive and activate
             T component = Get(false);
             
-            if (component == null) return;
+            if (component == null) return null;
             
             component.gameObject.SetActive(true);
         
@@ -58,6 +59,7 @@ namespace ObjectPool
             ActiveObjectsCount++;
         
             OnObjectActivate?.Invoke(component);
+            return component;
         }
 
         public void DeactivateObject(T obj)
@@ -78,6 +80,8 @@ namespace ObjectPool
                 InitializeObject();
 
             T obj = _pool.Find(x => x.gameObject.activeInHierarchy == isActive);
+            
+            if (obj == null) Debug.LogWarning("Could not find available component for pool");
             return obj;
         }
     

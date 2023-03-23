@@ -9,6 +9,8 @@ namespace Enemies
     public class EnemyManager : MonoBehaviour
     {
         [SerializeField] private Transform _playerMainTower;
+        [Header("QA Enemy Spawn")]
+        [SerializeField] private int _numEnemiesToSpawn = 1;
         [Space(10)]
         [Header("Enemy Spawn")]
         [SerializeField] private Enemy[] _enemiesPrefabs;
@@ -47,6 +49,14 @@ namespace Enemies
         {
             //Debug only
             if (Input.GetKeyDown(KeyCode.T))
+            {
+                SpawnEnemies();
+            }
+        }
+
+        private void SpawnEnemies()
+        {
+            for (int i = 0; i < _numEnemiesToSpawn; i++)
             {
                 SpawnRandomEnemy();
             }
