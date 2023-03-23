@@ -6,10 +6,10 @@ using UnityEngine.Events;
 public class Health : MonoBehaviour
 {
     [SerializeField] private float _initialHealth = 10;
-    
+
     public UnityEvent<float> OnTakeDamage;
-    public UnityEvent OnDie;
-    
+    public UnityEvent<GameObject> OnDie;
+
     /// <summary>
     /// float deltaChange, float healthBefore
     /// </summary>
@@ -17,6 +17,7 @@ public class Health : MonoBehaviour
 
     private float _currentHealth;
     private float _maxHealth = 10;
+
     private void Start()
     {
         OnTakeDamage.AddListener(TakeDamage);
@@ -59,6 +60,11 @@ public class Health : MonoBehaviour
         _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
 
         //Handle Death
-        if (_currentHealth <= 0) OnDie.Invoke();
+        if (_currentHealth <= 0)
+        {
+            if (GameManager.Instance.Debug)
+                Debug.Log(name + " died ", gameObject);
+            OnDie.Invoke(gameObject);
+        }
     }
 }

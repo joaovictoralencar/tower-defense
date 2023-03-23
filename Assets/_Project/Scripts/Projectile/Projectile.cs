@@ -9,18 +9,18 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float _speed = 10;
 
     private ObjectPool<Projectile> _ownerPool;
-    private Vector3 _targetPosition;
+    private Vector3 _targetDirection;
     private float _damage;
 
     private void FixedUpdate()
     {
-        transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _speed * Time.deltaTime);
-        transform.forward = (_targetPosition - transform.position).normalized;
+        transform.position += (_targetDirection * _speed * Time.deltaTime);
+        transform.forward = _targetDirection;
     }
 
     public void Setup(Vector3 targetPosition, float damage, ObjectPool<Projectile> ownerPool)
     {
-        _targetPosition = targetPosition;
+        _targetDirection = (targetPosition - transform.position).normalized;
         _damage = damage;
         _ownerPool = ownerPool;
     }

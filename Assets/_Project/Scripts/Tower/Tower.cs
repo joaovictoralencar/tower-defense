@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ObjectPool;
+using Singletons;
 using Utils;
 
 [RequireComponent(typeof(SphereCollider))]
@@ -20,6 +21,8 @@ public class Tower : MonoBehaviour
     private Transform _target;
     private float _fireRateCooldown;
     private ObjectPool<Projectile> _projectilePool;
+
+    private List<Transform> _allTargets = new List<Transform>();
 
     private void Awake()
     {
@@ -69,7 +72,7 @@ public class Tower : MonoBehaviour
     private void InitializeTower()
     {
         UpdateRange(_attackRange);
-        _projectilePool = new ObjectPool<Projectile>(_shootPrefab, 20, transform);
+        _projectilePool = new ObjectPool<Projectile>(_shootPrefab, 20, _shootOrigin);
     }
 
     private void UpdateRange(float newAttackRange)
@@ -78,42 +81,98 @@ public class Tower : MonoBehaviour
         _rangeCollider.radius = newAttackRange;
     }
 
-    private void SetTarget(Transform target)
+    private void TryToSetTarget()
     {
-        _target = target;
-        Health health = target.GetComponentInParent<Health>();
-        if (health)
-        {
-            health.OnDie.AddListener(ResetTarget);
-        }
-    }
+        //Only if target is null
+        if (_target != null) return;
 
-    private void ResetTarget()
-    {
+        //Try to get closest target
+        _target = GetClosestTarget();
+        if (_target == null) return; //if couldn't find target, just return
+
         Health health = _target.GetComponentInParent<Health>();
         if (health)
         {
-            health.OnDie.RemoveListener(ResetTarget);
+            health.OnDie.AddListener((gameObj) => { TryToRemoveTargetFromList(gameObj.transform); });
+        }
+    }
+
+    private Transform GetClosestTarget()
+    {
+        Transform closest = null;
+
+        float closestDistance = Mathf.Infinity;
+        foreach (Transform target in _allTargets)
+        {
+            float dist = Vector3.Distance(transform.position, target.position);
+            if (dist < closestDistance)
+            {
+                closest = target;
+                closestDistance = dist;
+            }
+        }
+
+        return closest;
+    }
+
+    private void ResetTarget(GameObject obj)
+    {
+        Health health = obj.GetComponentInParent<Health>();
+        if (health)
+        {
+            health.OnDie.RemoveListener((gameObj) => { TryToRemoveTargetFromList(gameObj.transform); });
         }
 
         _target = null;
+
+        //When, for any reason, loses a target, try to get a new one
+        TryToSetTarget();
     }
 
     //Event Functions
     private void OnTriggerEnter(Collider other)
     {
-        if (_target != null) return;
-        if (Util.IsInLayer(other.gameObject, _targetLayer))
-        {
-            SetTarget(other.transform);
-        }
+        if (!Util.IsInLayer(other.gameObject, _targetLayer)) return;
+
+        TryToAddTargetToList(other.transform);
+        TryToSetTarget();
+    }
+
+    private void TryToAddTargetToList(Transform targetTransform)
+    {
+        if (_allTargets.Contains(targetTransform)) return;
+        _allTargets.Add(targetTransform);
+    }
+
+    private void TryToRemoveTargetFromList(Transform targetTransform)
+    {
+        if (!_allTargets.Contains(targetTransform)) return;
+        _allTargets.Remove(targetTransform);
+
+        if (targetTransform == _target)
+            ResetTarget(targetTransform.gameObject);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (_target == other.transform)
-        {
-            ResetTarget();
-        }
+        if (!Util.IsInLayer(other.gameObject, _targetLayer)) return;
+
+        TryToRemoveTargetFromList(other.transform);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!GameManager.Instance.Debug) return;
+        
+        Gizmos.color = new Color(1, 1, 0, .65f);
+        Gizmos.DrawWireSphere(transform.position, _attackRange);
+
+        if (!_target) return;
+        Gizmos.color = new Color(1, 0, 0, .5f);
+        Gizmos.DrawSphere(_target.position, 1);
+        Vector3 shootDirection = (_target.position - _shootOrigin.position);
+        Gizmos.color = new Color(0, 1, 0, 1f);
+
+        Gizmos.DrawRay(_shootOrigin.position, shootDirection);
     }
 }

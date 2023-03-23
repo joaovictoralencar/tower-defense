@@ -88,6 +88,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4217181707704980895, guid: c9ac5cb5773f76c4294d07863f8bd0aa, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7634099290699641541, guid: c9ac5cb5773f76c4294d07863f8bd0aa, type: 3}
       propertyPath: m_Name
       value: ProjectileBasic

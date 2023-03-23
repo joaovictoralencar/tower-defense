@@ -46,18 +46,18 @@ namespace ObjectPool
         {
             //Get inactive and activate
             T component = Get(false);
-            
+
             if (component == null) return null;
-            
+
             component.gameObject.SetActive(true);
-        
+
             //Set position
             Transform componentTransform = component.transform;
             if (position != default) componentTransform.position = position;
             if (rotation != default) componentTransform.rotation = rotation;
-        
+
             ActiveObjectsCount++;
-        
+
             OnObjectActivate?.Invoke(component);
             return component;
         }
@@ -65,10 +65,7 @@ namespace ObjectPool
         public void DeactivateObject(T obj)
         {
             if (!obj.gameObject.activeInHierarchy) return;
-        
-            if (_pool.Count >= _maxPoolSize)
-                Object.Destroy(obj.gameObject);
-
+            
             obj.gameObject.SetActive(false);
             ActiveObjectsCount--;
             OnObjectDeactivate?.Invoke(obj);
@@ -80,10 +77,9 @@ namespace ObjectPool
                 InitializeObject();
 
             T obj = _pool.Find(x => x.gameObject.activeInHierarchy == isActive);
-            
+
             if (obj == null) Debug.LogWarning("Could not find available component for pool");
             return obj;
         }
-    
     }
 }
