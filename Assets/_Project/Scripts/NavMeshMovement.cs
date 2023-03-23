@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Singletons;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,6 +14,14 @@ public class NavMeshMovement : MonoBehaviour
     void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        GameManager.Instance.OnPlayerDie.AddListener(gameObj =>
+        {
+            ResetDestination();
+        });
     }
 
     public void MoveToLocation(Vector3 targetPoint)

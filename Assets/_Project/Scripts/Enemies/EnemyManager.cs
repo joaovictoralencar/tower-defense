@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using ObjectPool;
+using Singletons;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Enemies
@@ -11,20 +13,40 @@ namespace Enemies
         [SerializeField] private Transform _playerMainTower;
 
         [Header("QA Enemy Spawn")] [SerializeField]
-        private int _numEnemiesToSpawn = 1;
+        private bool _spawnEnemies = true;
+
+        [SerializeField] private int _numEnemiesToSpawn = 1;
+        [SerializeField] private float _timeToSpawn = 1;
 
         [Space(10)] [Header("Enemy Spawn")] [SerializeField]
         private Enemy[] _enemiesPrefabs;
 
         [SerializeField] private int _initialEnemyPoolSize;
-        [SerializeField] private Transform _enemiesHolder;
-
+        [SerializeField] private Transform _enemiesSpawn;
 
         private Dictionary<EnemyType, ObjectPool<Enemy>> _enemyPools;
+
+        private float _spawnCooldown = 1;
 
         private void Awake()
         {
             InitializeEnemyPools();
+        }
+
+        private void Start()
+        {
+            GameManager.Instance.OnPlayerDie.AddListener(OnPlayerDie);
+        }
+
+        private void Update()
+        {
+            SpawnEnemiesOverTime();
+
+            //Debug only
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                SpawnEnemies();
+            }
         }
 
         void InitializeEnemyPools()
@@ -39,7 +61,7 @@ namespace Enemies
 
                 //Create pool from current type of enemy
                 ObjectPool<Enemy> enemyPool =
-                    new ObjectPool<Enemy>(enemiesPrefab, _initialEnemyPoolSize, _enemiesHolder);
+                    new ObjectPool<Enemy>(enemiesPrefab, _initialEnemyPoolSize, _enemiesSpawn);
 
                 enemyPool.OnObjectActivate += OnActivateBasicEnemy;
                 enemyPool.OnObjectDeactivate += OnDeactivateBasicEnemy;
@@ -48,13 +70,20 @@ namespace Enemies
             }
         }
 
-        private void Update()
+        private void SpawnEnemiesOverTime()
         {
-            //Debug only
-            if (Input.GetKeyDown(KeyCode.T))
+            if (!_spawnEnemies) return;
+            if (_spawnCooldown <= 0)
             {
+                _spawnCooldown = _timeToSpawn;
                 SpawnEnemies();
             }
+            else _spawnCooldown -= Time.deltaTime;
+        }
+
+        void OnPlayerDie(GameObject gameObj)
+        {
+            _spawnEnemies = false;
         }
 
         private void SpawnEnemies()
@@ -75,15 +104,15 @@ namespace Enemies
 
             int randomIndex = Random.Range(0, _enemiesPrefabs.Length);
             EnemyType type = _enemiesPrefabs[randomIndex].Type;
-            _enemyPools[type].ActivateObject(Vector3.zero, Quaternion.identity);
+            _enemyPools[type].ActivateObject(_enemiesSpawn.position, Quaternion.identity);
         }
 
         private void OnEnemyDie(GameObject obj)
         {
             Enemy enemy = obj.GetComponentInParent<Enemy>();
-            
+
             if (enemy == null) return;
-            
+
             _enemyPools[enemy.Type].DeactivateObject(enemy);
         }
 

@@ -24,19 +24,19 @@ public class Tower : MonoBehaviour
 
     private List<Transform> _allTargets = new List<Transform>();
 
-    private void Awake()
+    protected virtual void Awake()
     {
         _rangeCollider = GetComponent<SphereCollider>();
         _rangeCollider.isTrigger = true;
     }
 
     //Lifecycle
-    private void Start()
+    protected void Start()
     {
         InitializeTower();
     }
 
-    private void Update()
+    protected void Update()
     {
         HandleShoot();
     }
@@ -104,6 +104,7 @@ public class Tower : MonoBehaviour
         float closestDistance = Mathf.Infinity;
         foreach (Transform target in _allTargets)
         {
+            if (!target.gameObject.activeInHierarchy) continue;
             float dist = Vector3.Distance(transform.position, target.position);
             if (dist < closestDistance)
             {
@@ -130,7 +131,7 @@ public class Tower : MonoBehaviour
     }
 
     //Event Functions
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if (!Util.IsInLayer(other.gameObject, _targetLayer)) return;
 
@@ -163,7 +164,7 @@ public class Tower : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!GameManager.Instance.Debug) return;
-        
+
         Gizmos.color = new Color(1, 1, 0, .65f);
         Gizmos.DrawWireSphere(transform.position, _attackRange);
 

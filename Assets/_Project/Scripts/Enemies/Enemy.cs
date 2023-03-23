@@ -6,6 +6,7 @@ namespace Enemies
     [RequireComponent(typeof(NavMeshMovement))]
     public class Enemy : MonoBehaviour
     {
+        [SerializeField] private float _damage = 1;
         [SerializeField] private EnemyType _type = EnemyType.Basic;
         private NavMeshMovement _movement;
         private Health _health;
@@ -31,6 +32,7 @@ namespace Enemies
         }
 
         public EnemyType Type => _type;
+        public float Damage => _damage;
 
         private void Awake()
         {

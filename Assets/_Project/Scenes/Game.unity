@@ -152,7 +152,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &39866016
 MonoBehaviour:
@@ -167,11 +167,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMainTower: {fileID: 392695218}
-  _numEnemiesToSpawn: 2
+  _spawnEnemies: 1
+  _numEnemiesToSpawn: 3
+  _timeToSpawn: 1
   _enemiesPrefabs:
   - {fileID: 8192695888105497469, guid: d4559a8caac03cf48890c10229a3e8c2, type: 3}
   _initialEnemyPoolSize: 20
-  _enemiesHolder: {fileID: 1088314107}
+  _enemiesSpawn: {fileID: 1088314107}
 --- !u!1 &58228906
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,7 +216,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &102355574
 GameObject:
@@ -248,38 +250,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &392695217 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3894197494751540447, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
-  m_PrefabInstance: {fileID: 3894197494359898478}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &392695218 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3894197494751540444, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
   m_PrefabInstance: {fileID: 3894197494359898478}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &392695219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 392695217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcde0079f5bbafd4eb1ce3f7695e3690, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _initialHealth: 10
-  OnTakeDamage:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDie:
-    m_PersistentCalls:
-      m_Calls: []
-  OnChangeHealth:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &841768170
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +283,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &940441389
 GameObject:
@@ -405,7 +380,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1401167193
 GameObject:
@@ -683,7 +658,7 @@ Transform:
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1621061471
 GameObject:
@@ -713,7 +688,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1643531297
 GameObject:
@@ -909,17 +884,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2950663914528275017, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
-      propertyPath: _damage
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3065945048947339908, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3894197494751540444, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3894197494751540444, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
       propertyPath: m_LocalPosition.x
@@ -964,6 +931,10 @@ PrefabInstance:
     - target: {fileID: 3894197494751540447, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
       propertyPath: m_Name
       value: PlayerMainTower
+      objectReference: {fileID: 0}
+    - target: {fileID: 6365763542156063437, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
+      propertyPath: _canAttack
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 625afa77bf61e2648bddf22660845b97, type: 3}
