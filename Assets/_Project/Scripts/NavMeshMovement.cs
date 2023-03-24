@@ -24,8 +24,9 @@ public class NavMeshMovement : MonoBehaviour
         });
     }
 
-    public void MoveToLocation(Vector3 targetPoint)
+    public void SetDestination(Vector3 targetPoint)
     {
+        _agent.Warp(transform.position);
         if (!_agent.isOnNavMesh) return;
         _agent.destination = targetPoint;
         _agent.isStopped = false;
@@ -34,7 +35,7 @@ public class NavMeshMovement : MonoBehaviour
     public void ResetDestination()
     {
         if (!_agent.isOnNavMesh) return;
-        _agent.destination = transform.position;
+        _agent.destination = default;
         _agent.isStopped = true;
     }
 }

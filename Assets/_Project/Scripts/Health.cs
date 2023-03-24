@@ -7,7 +7,6 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float _initialHealth = 10;
 
-    public UnityEvent<float> OnTakeDamage;
     public UnityEvent<GameObject> OnDie;
 
     /// <summary>
@@ -15,12 +14,15 @@ public class Health : MonoBehaviour
     /// </summary>
     public UnityEvent<float, float> OnChangeHealth;
 
+    public UnityEvent<float, bool> OnChangeMaxHealth;
+
     private float _currentHealth;
     private float _maxHealth = 10;
 
+    public float MaxHealth => _maxHealth;
+
     private void Start()
     {
-        OnTakeDamage.AddListener(TakeDamage);
         Initialize();
     }
 
@@ -30,13 +32,33 @@ public class Health : MonoBehaviour
         ChangeHealth(_maxHealth);
     }
 
-    void TakeDamage(float damage)
+    public void Die()
+    {
+        TakeDamage(_maxHealth);
+    }
+
+    public void Heal(float healAmount)
+    {
+        ChangeHealth(Math.Abs(healAmount));
+    }
+
+    public void TakeDamage(float damage)
     {
         ChangeHealth(-Math.Abs(damage));
     }
 
-    void ChangeHealth(float changeValue)
+    public void ChangeMaxHealth(float newMaxHealth, bool healToMax = false)
     {
+        float deltaChange = newMaxHealth - _maxHealth;
+        _maxHealth = newMaxHealth;
+        OnChangeMaxHealth.Invoke(newMaxHealth, healToMax);
+        if (healToMax)
+            ChangeHealth(deltaChange);
+    }
+
+    private void ChangeHealth(float changeValue)
+    {
+        if (!Application.isPlaying) return;
         //Damage
         if (changeValue < 0)
         {
@@ -53,11 +75,12 @@ public class Health : MonoBehaviour
         //Change current health
         _currentHealth += changeValue;
 
+        //Avoid negative number and number above max health
+        _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
+        
         //Call OnChangeHealth event
         OnChangeHealth.Invoke(changeValue, _currentHealth);
 
-        //Avoid negative number and number above max health
-        _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
 
         //Handle Death
         if (_currentHealth <= 0)

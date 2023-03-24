@@ -23,10 +23,20 @@ public class PlayerMainTower : Tower
         _health.OnDie.AddListener(OnDie);
     }
 
+    protected override void Start()
+    {
+        base.Start();
+        GameManager.Instance.OnGenerateGrid.AddListener((start, end) => SetMainTowerPosition(end));
+    }
+
+    void SetMainTowerPosition(Vector3 pos)
+    {
+        transform.position = pos;
+    }
+
     private void OnDie(GameObject gameObj)
     {
         GameManager.Instance.OnPlayerDie.Invoke(gameObj);
         Destroy(gameObj);
     }
-    
 }

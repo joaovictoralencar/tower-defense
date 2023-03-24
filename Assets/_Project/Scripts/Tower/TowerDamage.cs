@@ -25,8 +25,8 @@ public class TowerDamage : MonoBehaviour
         Enemy enemy = col.GetComponentInParent<Enemy>();
         if (enemy)
         {
-            _health.OnTakeDamage.Invoke(enemy.Damage);
-            enemy.Health.OnDie.Invoke(enemy.gameObject);
+            _health.TakeDamage(enemy.Damage);
+            enemy.Health.Die();
         }
     }
 }

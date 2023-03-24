@@ -31,12 +31,12 @@ public class Tower : MonoBehaviour
     }
 
     //Lifecycle
-    protected void Start()
+    protected virtual void Start()
     {
         InitializeTower();
     }
 
-    protected void Update()
+    protected virtual void Update()
     {
         HandleShoot();
     }

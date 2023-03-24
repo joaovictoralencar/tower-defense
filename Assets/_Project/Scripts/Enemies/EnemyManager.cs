@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ObjectPool;
 using Singletons;
@@ -22,7 +21,7 @@ namespace Enemies
         private Enemy[] _enemiesPrefabs;
 
         [SerializeField] private int _initialEnemyPoolSize;
-        [SerializeField] private Transform _enemiesSpawn;
+        [FormerlySerializedAs("_enemiesSpawn")] [SerializeField] private Transform _enemiesSpawnTransform;
 
         private Dictionary<EnemyType, ObjectPool<Enemy>> _enemyPools;
 
@@ -36,6 +35,12 @@ namespace Enemies
         private void Start()
         {
             GameManager.Instance.OnPlayerDie.AddListener(OnPlayerDie);
+            GameManager.Instance.OnGenerateGrid.AddListener(SetSpawnOrigin);
+        }
+
+        void SetSpawnOrigin(Vector3 startPos, Vector3 endPos)
+        {
+            _enemiesSpawnTransform.position = startPos;
         }
 
         private void Update()
@@ -61,7 +66,7 @@ namespace Enemies
 
                 //Create pool from current type of enemy
                 ObjectPool<Enemy> enemyPool =
-                    new ObjectPool<Enemy>(enemiesPrefab, _initialEnemyPoolSize, _enemiesSpawn);
+                    new ObjectPool<Enemy>(enemiesPrefab, _initialEnemyPoolSize, _enemiesSpawnTransform);
 
                 enemyPool.OnObjectActivate += OnActivateBasicEnemy;
                 enemyPool.OnObjectDeactivate += OnDeactivateBasicEnemy;
@@ -104,7 +109,7 @@ namespace Enemies
 
             int randomIndex = Random.Range(0, _enemiesPrefabs.Length);
             EnemyType type = _enemiesPrefabs[randomIndex].Type;
-            _enemyPools[type].ActivateObject(_enemiesSpawn.position, Quaternion.identity);
+            _enemyPools[type].ActivateObject(_enemiesSpawnTransform.position, Quaternion.identity);
         }
 
         private void OnEnemyDie(GameObject obj)
@@ -118,7 +123,7 @@ namespace Enemies
 
         private void OnActivateBasicEnemy(Enemy enemy)
         {
-            enemy.Movement.MoveToLocation(_playerMainTower.position);
+            enemy.Movement.SetDestination(_playerMainTower.position);
             enemy.Health.OnDie.AddListener(OnEnemyDie);
         }
 

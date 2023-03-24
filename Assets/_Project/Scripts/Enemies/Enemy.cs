@@ -8,6 +8,7 @@ namespace Enemies
     {
         [SerializeField] private float _damage = 1;
         [SerializeField] private EnemyType _type = EnemyType.Basic;
+        [SerializeField] private HPBar _hpBar;
         private NavMeshMovement _movement;
         private Health _health;
 
@@ -20,7 +21,7 @@ namespace Enemies
                 return _movement;
             }
         }
-        
+
         public Health Health
         {
             get
@@ -38,11 +39,32 @@ namespace Enemies
         {
             _movement = GetComponent<NavMeshMovement>();
             _health = GetComponent<Health>();
+            InitializeHPBar();
+        }
+
+        private void OnEnable()
+        {
+            InitializeHPBar();
+        }
+
+        private void InitializeHPBar()
+        {
+            if (_hpBar == null) _hpBar = GetComponentInChildren<HPBar>();
+            if (_health)
+            {
+                _hpBar.Initialize(_health.MaxHealth);
+                _health.OnChangeHealth.AddListener(_hpBar.ChangeHealthBar);
+                _health.OnChangeMaxHealth.AddListener(_hpBar.ChangeMaxHealth);
+            }
+            else Debug.LogWarning("Could not initialize HPBar because health is missing");
         }
     }
 
     public enum EnemyType
     {
-        Basic, Tank, Runner, Boss
+        Basic,
+        Tank,
+        Runner,
+        Boss
     }
 }

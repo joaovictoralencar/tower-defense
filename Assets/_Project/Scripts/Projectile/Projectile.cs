@@ -51,7 +51,7 @@ public class Projectile : MonoBehaviour
         Health health = collision.gameObject.GetComponentInParent<Health>();
         if (health)
         {
-            health.OnTakeDamage.Invoke(_damage);
+            health.TakeDamage(_damage);
         }
 
         OnHit();
