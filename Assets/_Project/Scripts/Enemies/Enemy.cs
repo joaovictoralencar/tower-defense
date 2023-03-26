@@ -7,6 +7,8 @@ namespace Enemies
     public class Enemy : MonoBehaviour
     {
         [SerializeField] private float _damage = 1;
+        [SerializeField] private float _pointsToGive = 2;
+        [SerializeField] private float _coinsToGive = 50;
         [SerializeField] private EnemyType _type = EnemyType.Basic;
         [SerializeField] private HPBar _hpBar;
         private NavMeshMovement _movement;
@@ -34,6 +36,10 @@ namespace Enemies
 
         public EnemyType Type => _type;
         public float Damage => _damage;
+
+        public float PointsToGive => _pointsToGive;
+
+        public float CoinsToGive => _coinsToGive;
 
         private void Awake()
         {

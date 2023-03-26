@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using ObjectPool;
 using Singletons;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Enemies
@@ -10,22 +9,15 @@ namespace Enemies
     public class EnemyManager : MonoBehaviour
     {
         [SerializeField] private Transform _playerMainTower;
-
-        [Header("QA Enemy Spawn")] [SerializeField]
-        private bool _spawnEnemies = true;
-
-        [SerializeField] private int _numEnemiesToSpawn = 1;
-        [SerializeField] private float _timeToSpawn = 1;
-
+        
         [Space(10)] [Header("Enemy Spawn")] [SerializeField]
         private Enemy[] _enemiesPrefabs;
 
         [SerializeField] private int _initialEnemyPoolSize;
-        [FormerlySerializedAs("_enemiesSpawn")] [SerializeField] private Transform _enemiesSpawnTransform;
-
+        [SerializeField] private Transform _enemiesSpawnTransform;
+        
         private Dictionary<EnemyType, ObjectPool<Enemy>> _enemyPools;
 
-        private float _spawnCooldown = 1;
 
         private void Awake()
         {
@@ -34,7 +26,6 @@ namespace Enemies
 
         private void Start()
         {
-            GameManager.Instance.OnPlayerDie.AddListener(OnPlayerDie);
             GameManager.Instance.OnGenerateGrid.AddListener(SetSpawnOrigin);
         }
 
@@ -42,18 +33,6 @@ namespace Enemies
         {
             _enemiesSpawnTransform.position = startPos;
         }
-
-        private void Update()
-        {
-            SpawnEnemiesOverTime();
-
-            //Debug only
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                SpawnEnemies();
-            }
-        }
-
         void InitializeEnemyPools()
         {
             //Instantiate new pool dictionary
@@ -74,42 +53,18 @@ namespace Enemies
                 _enemyPools.Add(enemiesPrefab.Type, enemyPool);
             }
         }
-
-        private void SpawnEnemiesOverTime()
-        {
-            if (!_spawnEnemies) return;
-            if (_spawnCooldown <= 0)
-            {
-                _spawnCooldown = _timeToSpawn;
-                SpawnEnemies();
-            }
-            else _spawnCooldown -= Time.deltaTime;
-        }
-
-        void OnPlayerDie(GameObject gameObj)
-        {
-            _spawnEnemies = false;
-        }
-
-        private void SpawnEnemies()
-        {
-            for (int i = 0; i < _numEnemiesToSpawn; i++)
-            {
-                SpawnRandomEnemy();
-            }
-        }
-
-        private void SpawnRandomEnemy()
+        
+        public Enemy SpawnRandomEnemy()
         {
             if (_enemiesPrefabs.Length == 0)
             {
                 Debug.LogWarning("Enemies prefabs list is empty, can't spawn");
-                return;
+                return null;
             }
 
             int randomIndex = Random.Range(0, _enemiesPrefabs.Length);
             EnemyType type = _enemiesPrefabs[randomIndex].Type;
-            _enemyPools[type].ActivateObject(_enemiesSpawnTransform.position, Quaternion.identity);
+            return _enemyPools[type].ActivateObject(_enemiesSpawnTransform.position, Quaternion.identity);
         }
 
         private void OnEnemyDie(GameObject obj)
@@ -119,6 +74,7 @@ namespace Enemies
             if (enemy == null) return;
 
             _enemyPools[enemy.Type].DeactivateObject(enemy);
+            GameManager.Instance.OnEnemyDie.Invoke(enemy);
         }
 
         private void OnActivateBasicEnemy(Enemy enemy)

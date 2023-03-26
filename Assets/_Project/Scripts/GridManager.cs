@@ -13,6 +13,7 @@ public class GridManager : MonoBehaviour
     public int height;
     public float tileWidth;
     public float tileHeight;
+    public int borderThickness = 1;
     public Transform originTransform;
     private Vector3 startPosition, endPosition;
     List<Vector3> path = new List<Vector3>();
@@ -30,18 +31,20 @@ public class GridManager : MonoBehaviour
 
     private void GenerateStartAndEnd()
     {
-        int startX = Random.Range(0, width);
-        int endX = Random.Range(0, width);
+        int startX = Random.Range(borderThickness, width - borderThickness);
+        int endX = Random.Range(borderThickness, width - borderThickness);
+        //int startY = Random.Range(borderThickness, height - borderThickness);
+        //int endY = Random.Range(borderThickness, height - borderThickness);
 
         startPosition = new Vector3(
             originTransform.position.x + startX * tileWidth,
             originTransform.position.y,
-            originTransform.position.z
+            originTransform.position.z + (borderThickness * tileHeight)
         );
         endPosition = new Vector3(
             originTransform.position.x + endX * tileWidth,
             originTransform.position.y,
-            originTransform.position.z + (height - 1) * tileHeight
+            originTransform.position.z + (height - 1 - borderThickness) * tileHeight
         );
 
         if (startTilePrefab)
@@ -49,6 +52,7 @@ public class GridManager : MonoBehaviour
         if (endTilePrefab)
             Instantiate(endTilePrefab, endPosition, Quaternion.identity, originTransform);
     }
+
 
     [SerializeField] private int _minTurns = 1;
     [SerializeField] private int _maxTurns = 4;
@@ -138,9 +142,7 @@ public class GridManager : MonoBehaviour
             path.Add(currentPos);
         }
 
-        for (int x = 0;
-             x < width;
-             x++)
+        for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
             {

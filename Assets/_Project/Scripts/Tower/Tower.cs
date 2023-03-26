@@ -21,6 +21,7 @@ public class Tower : MonoBehaviour
     private Transform _target;
     private float _fireRateCooldown;
     private ObjectPool<Projectile> _projectilePool;
+    private Vector3 _targetPos;
 
     private List<Transform> _allTargets = new List<Transform>();
 
@@ -64,10 +65,13 @@ public class Tower : MonoBehaviour
         }
 
         Projectile projectile = _projectilePool.ActivateObject(_shootOrigin.position, Quaternion.identity);
-        projectile.Setup(_target.position, _damage, _projectilePool);
+
+        _targetPos = _target.position + Vector3.up;
+        projectile.Setup(_targetPos, _damage, _projectilePool);
         _fireRateCooldown = _fireRate;
         //TODO Play sound fx, instantiate MUZZLE vfx
     }
+
 
     private void InitializeTower()
     {
@@ -171,7 +175,7 @@ public class Tower : MonoBehaviour
         if (!_target) return;
         Gizmos.color = new Color(1, 0, 0, .5f);
         Gizmos.DrawSphere(_target.position, 1);
-        Vector3 shootDirection = (_target.position - _shootOrigin.position);
+        Vector3 shootDirection = (_targetPos - _shootOrigin.position);
         Gizmos.color = new Color(0, 1, 0, 1f);
 
         Gizmos.DrawRay(_shootOrigin.position, shootDirection);

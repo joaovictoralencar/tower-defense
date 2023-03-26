@@ -38,7 +38,7 @@ public class HealthEditor : Editor
 
         if (GUILayout.Button("Change max health to " + maxHealth))
         {
-            health.ChangeMaxHealth(maxHealth, true);
+            health.ChangeMaxHealth(maxHealth, health.CurrentHealth, true);
         }
     }
 }

@@ -13,15 +13,18 @@ public class Health : MonoBehaviour
     /// float deltaChange, float healthBefore
     /// </summary>
     public UnityEvent<float, float> OnChangeHealth;
+    public UnityEvent<Health> OnInitialize;
 
-    public UnityEvent<float, bool> OnChangeMaxHealth;
+    public UnityEvent<float, float, bool> OnChangeMaxHealth;
 
     private float _currentHealth;
     private float _maxHealth = 10;
 
     public float MaxHealth => _maxHealth;
 
-    private void Start()
+    public float CurrentHealth => _currentHealth;
+
+    private void OnEnable()
     {
         Initialize();
     }
@@ -29,7 +32,9 @@ public class Health : MonoBehaviour
     void Initialize()
     {
         _maxHealth = _initialHealth;
-        ChangeHealth(_maxHealth);
+        _currentHealth = _initialHealth;
+        ChangeMaxHealth(_initialHealth, _currentHealth, true);
+        OnInitialize.Invoke(this);
     }
 
     public void Die()
@@ -47,11 +52,11 @@ public class Health : MonoBehaviour
         ChangeHealth(-Math.Abs(damage));
     }
 
-    public void ChangeMaxHealth(float newMaxHealth, bool healToMax = false)
+    public void ChangeMaxHealth(float newMaxHealth, float current, bool healToMax = false)
     {
-        float deltaChange = newMaxHealth - _maxHealth;
+        float deltaChange = newMaxHealth - current;
         _maxHealth = newMaxHealth;
-        OnChangeMaxHealth.Invoke(newMaxHealth, healToMax);
+        OnChangeMaxHealth.Invoke(newMaxHealth, current, healToMax);
         if (healToMax)
             ChangeHealth(deltaChange);
     }
@@ -63,24 +68,25 @@ public class Health : MonoBehaviour
         if (changeValue < 0)
         {
             if (GameManager.Instance.Debug)
-                Debug.Log(name + " took " + changeValue + " damage", gameObject);
+                Debug.Log(name + " took " + changeValue + " damage. ", gameObject);
         }
         else if (changeValue > 0) //Heal
         {
             if (GameManager.Instance.Debug)
                 Debug.Log(name + " healed " + changeValue + " points", gameObject);
-        }
-        else return;
+        } else return;
 
         //Change current health
         _currentHealth += changeValue;
 
         //Avoid negative number and number above max health
         _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
-        
+
         //Call OnChangeHealth event
         OnChangeHealth.Invoke(changeValue, _currentHealth);
-
+        
+        if (GameManager.Instance.Debug)
+            Debug.Log(name + " health: " + _currentHealth, gameObject);
 
         //Handle Death
         if (_currentHealth <= 0)
