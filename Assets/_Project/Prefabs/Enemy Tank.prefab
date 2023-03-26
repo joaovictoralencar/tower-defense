@@ -76,6 +76,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 3.63
       objectReference: {fileID: 0}
+    - target: {fileID: 1173178285160500924, guid: d4559a8caac03cf48890c10229a3e8c2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.02
+      objectReference: {fileID: 0}
     - target: {fileID: 2500815743855631776, guid: d4559a8caac03cf48890c10229a3e8c2, type: 3}
       propertyPath: m_Name
       value: Enemy Tank
@@ -142,7 +146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4454983513052636130, guid: d4559a8caac03cf48890c10229a3e8c2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 4.65
+      value: 4.42
       objectReference: {fileID: 0}
     - target: {fileID: 8192695888105497469, guid: d4559a8caac03cf48890c10229a3e8c2, type: 3}
       propertyPath: _type

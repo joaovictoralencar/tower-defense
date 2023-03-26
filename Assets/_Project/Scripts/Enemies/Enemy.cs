@@ -1,4 +1,5 @@
 using System;
+using Singletons;
 using UnityEngine;
 
 namespace Enemies
@@ -11,6 +12,7 @@ namespace Enemies
         [SerializeField] private float _coinsToGive = 50;
         [SerializeField] private EnemyType _type = EnemyType.Basic;
         [SerializeField] private HPBar _hpBar;
+        public Transform ScoreUIPosition;
         private NavMeshMovement _movement;
         private Health _health;
 
@@ -51,13 +53,34 @@ namespace Enemies
         private void OnEnable()
         {
             InitializeHPBar();
-            _health.OnTakeDamage.AddListener(HandleEnemyRecoil);
+            _health.OnTakeDamage.AddListener(OnTakeDamage);
         }
 
-        private void HandleEnemyRecoil(float damage)
+        private void OnDisable()
+        {
+            _health.OnTakeDamage.RemoveListener(OnTakeDamage);
+
+        }
+
+        private void OnTakeDamage(float damage)
         {
             if (_type != EnemyType.Runner)
                 _movement.StartEnemyRecoil();
+
+            Debug.Log("aaaaaaaaaaaaa");
+            PlayerScoreChangeUI playerScoreChangeUI =
+                GameManager.Instance.DamageTextPool.ActivateObject(_hpBar.transform.position);
+
+            playerScoreChangeUI.SetText("-" + damage);
+            playerScoreChangeUI.Animate();
+            playerScoreChangeUI.OnComplete.AddListener(GameManager.Instance.DamageTextPool.DeactivateObject);
+            GameManager.Instance.DamageTextPool.OnObjectDeactivate += RemoveOnCompleteListener;
+            
+        }
+
+        private void RemoveOnCompleteListener(PlayerScoreChangeUI obj)
+        {
+            obj.OnComplete.RemoveListener(GameManager.Instance.DamageTextPool.DeactivateObject);
         }
 
         private void InitializeHPBar()

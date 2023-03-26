@@ -1,6 +1,7 @@
 using System;
 using DG.Tweening;
 using Enemies;
+using ObjectPool;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -23,7 +24,28 @@ namespace Singletons
         [SerializeField] private PlayerScore _coins;
         [SerializeField] private PlayerScore _defeated;
 
+        [Header("UI Change Text Prefab")] [SerializeField]
+        private PlayerScoreChangeUI _changePointsText;
+
+        [SerializeField] private PlayerScoreChangeUI _changeCoinsText;
+        [SerializeField] private PlayerScoreChangeUI _changeDefeatedText;
+        [SerializeField] private PlayerScoreChangeUI _changeDamageText;
         public PlayerScore Points => _points;
+
+        public ObjectPool<PlayerScoreChangeUI> PointsTextPool => _pointsTextPool;
+
+        public ObjectPool<PlayerScoreChangeUI> CoinsTextPool => _coinsTextPool;
+
+        public ObjectPool<PlayerScoreChangeUI> DefeatedTextPool => _defeatedTextPool;
+
+        public ObjectPool<PlayerScoreChangeUI> DamageTextPool => _damageTextPool;
+
+        private ObjectPool<PlayerScoreChangeUI> _pointsTextPool;
+        private ObjectPool<PlayerScoreChangeUI> _coinsTextPool;
+        private ObjectPool<PlayerScoreChangeUI> _defeatedTextPool;
+        private ObjectPool<PlayerScoreChangeUI> _damageTextPool;
+
+        [SerializeField] private PlayerMainTower _playerMainTower;
 
         private void Start()
         {
@@ -68,22 +90,58 @@ namespace Singletons
 
         private void InitializePlayerScores()
         {
-            InitializePlayerScore(_points);
-            InitializePlayerScore(_coins);
-            InitializePlayerScore(_defeated);
+            _pointsTextPool =
+                InitializePlayerScore(_points, _changePointsText);
+            _coinsTextPool = InitializePlayerScore(_coins, _changeCoinsText);
+            _defeatedTextPool = InitializePlayerScore(_defeated, _changeDefeatedText);
+
+            _damageTextPool = new ObjectPool<PlayerScoreChangeUI>(_changeDamageText, 50, transform);
         }
 
-        private void InitializePlayerScore(PlayerScore score)
+        private ObjectPool<PlayerScoreChangeUI> InitializePlayerScore(PlayerScore score,
+            PlayerScoreChangeUI playerScoreChangeUI)
         {
-            if (score == null) return;
+            if (score == null) return null;
             score.Initialize();
+            ObjectPool<PlayerScoreChangeUI> pool =
+                new ObjectPool<PlayerScoreChangeUI>(playerScoreChangeUI, 50, transform);
+            
+            pool.OnObjectActivate += (scoreChangeUI) =>
+            {
+                scoreChangeUI.OnComplete.AddListener(pool.DeactivateObject);
+            };
+            return pool;
         }
 
         private void OnEnemyDieCallback(Enemy enemy)
         {
+            AddPoints(enemy);
+            AddCoin(enemy);
+            AddDefeated(enemy);
+        }
+
+        void AddPoints(Enemy enemy)
+        {
             _points.AddScore(enemy.PointsToGive);
+            PlayerScoreChangeUI obj = _pointsTextPool.ActivateObject(enemy.ScoreUIPosition.position);
+            obj.SetText("+" + enemy.PointsToGive);
+            obj.Animate(false);
+        }
+
+        void AddCoin(Enemy enemy)
+        {
             _coins.AddScore(enemy.CoinsToGive);
+            PlayerScoreChangeUI obj = _coinsTextPool.ActivateObject(enemy.ScoreUIPosition.position);
+            obj.SetText("+" + enemy.CoinsToGive);
+            obj.Animate();
+        }
+
+        void AddDefeated(Enemy enemy)
+        {
             _defeated.AddScore(1);
+            PlayerScoreChangeUI obj = _defeatedTextPool.ActivateObject(_playerMainTower.ScoreGainPostion.position);
+            obj.SetText("+" + 1);
+            obj.Animate();
         }
     }
 }

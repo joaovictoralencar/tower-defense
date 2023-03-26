@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMainTower : Tower
 {
     private Health _health;
+    public Transform ScoreGainPostion;
 
     public Health Health
     {

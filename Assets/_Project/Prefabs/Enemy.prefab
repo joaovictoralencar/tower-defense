@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &226778123695961835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1173178285160500924}
+  m_Layer: 6
+  m_Name: ScoreGainUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1173178285160500924
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226778123695961835}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.27, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2500815743855631779}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &720975788914872011
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,7 +39,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7918925317533538998}
-  - component: {fileID: 4267958830200661386}
   m_Layer: 5
   m_Name: WorldCanvas
   m_TagString: Untagged
@@ -33,18 +62,6 @@ Transform:
   m_Father: {fileID: 2500815743855631779}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4267958830200661386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 720975788914872011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3f96263939b9ee49a9e199bd419baf0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2500815743041963969
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,6 +129,7 @@ Transform:
   - {fileID: 1508166314562963628}
   - {fileID: 7918925317533538998}
   - {fileID: 2500815743041963968}
+  - {fileID: 1173178285160500924}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -154,6 +172,7 @@ MonoBehaviour:
   _coinsToGive: 50
   _type: 0
   _hpBar: {fileID: 1015521174550297072}
+  ScoreUIPosition: {fileID: 1173178285160500924}
 --- !u!114 &5539511234590368116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,6 +358,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f54ae37b1e2090489165663fd374250, type: 3}
+--- !u!1 &1015521174550297073 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3567791220280736769, guid: 2f54ae37b1e2090489165663fd374250, type: 3}
+  m_PrefabInstance: {fileID: 4581440749398263280}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1015521174550297077 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3567791220280736773, guid: 2f54ae37b1e2090489165663fd374250, type: 3}
@@ -349,10 +373,22 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3567791220280736768, guid: 2f54ae37b1e2090489165663fd374250, type: 3}
   m_PrefabInstance: {fileID: 4581440749398263280}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1015521174550297073}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d20f7f709e212c64db70a668c6cb8e88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5340240446842375705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1015521174550297073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3f96263939b9ee49a9e199bd419baf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &6594101342192764440

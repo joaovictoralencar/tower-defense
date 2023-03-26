@@ -64,6 +64,7 @@ public class WaveManager : MonoBehaviour
 
     void OnStartWave()
     {
+        _waveNumber.AddScore(1);
         _defeatedPerWave = 0;
         _enemiesPerWave.ChangeMaxValue(_numSpawnedEnemies + _undefeatedCount);
         _enemiesPerWave.SetScore(_defeatedPerWave);
