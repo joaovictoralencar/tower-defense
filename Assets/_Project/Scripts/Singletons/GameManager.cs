@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Enemies;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,6 +9,7 @@ namespace Singletons
     public class GameManager : Singleton<GameManager>
     {
         public bool Debug = true;
+        public float timeScale = 1;
 
         public UnityEvent<GameObject> OnPlayerDie = new UnityEvent<GameObject>();
         public UnityEvent<Enemy> OnEnemyDie = new UnityEvent<Enemy>();
@@ -25,8 +27,43 @@ namespace Singletons
 
         private void Start()
         {
+            DOTween.SetTweensCapacity(500, 50);
             InitializePlayerScores();
             OnEnemyDie.AddListener(OnEnemyDieCallback);
+        }
+
+        private void Update()
+        {
+            Time.timeScale = timeScale;
+
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                timeScale = 0;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                timeScale = 1;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                timeScale = 2;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                timeScale = 3;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                timeScale = 4;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                timeScale = 5;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                timeScale = 6;
+            }
         }
 
         private void InitializePlayerScores()

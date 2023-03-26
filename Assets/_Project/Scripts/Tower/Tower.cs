@@ -35,12 +35,23 @@ public class Tower : MonoBehaviour
     protected virtual void Start()
     {
         InitializeTower();
+        StartCoroutine(CheckTargetCoroutine());
     }
 
     protected virtual void Update()
     {
         HandleShoot();
     }
+
+    private IEnumerator CheckTargetCoroutine()
+    {
+        while (true)
+        {
+            TryToSetTarget();
+            yield return new WaitForSeconds(1);
+        }
+    }
+    
 
     //Main methods
     private void HandleShoot()
@@ -66,7 +77,7 @@ public class Tower : MonoBehaviour
 
         Projectile projectile = _projectilePool.ActivateObject(_shootOrigin.position, Quaternion.identity);
 
-        _targetPos = _target.position + Vector3.up;
+        _targetPos = _target.position + (Vector3.up * .75f);
         projectile.Setup(_targetPos, _damage, _projectilePool);
         _fireRateCooldown = _fireRate;
         //TODO Play sound fx, instantiate MUZZLE vfx
@@ -84,22 +95,43 @@ public class Tower : MonoBehaviour
         _attackRange = newAttackRange;
         _rangeCollider.radius = newAttackRange;
     }
+    
+    
 
     private void TryToSetTarget()
     {
         //Only if target is null
-        if (_target != null) return;
+        //if (_target != null) return;
 
         //Try to get closest target
+        Transform lastTarget = _target;
         _target = GetClosestTarget();
         if (_target == null) return; //if couldn't find target, just return
 
+        if (lastTarget != null && lastTarget != _target)
+        {
+            SetTargetVisual(lastTarget, false);
+        }
+
+        SetTargetVisual(_target, true);
+        
         Health health = _target.GetComponentInParent<Health>();
         if (health)
         {
             health.OnDie.AddListener((gameObj) => { TryToRemoveTargetFromList(gameObj.transform); });
         }
     }
+
+    void SetTargetVisual(Transform target, bool showVisual)
+    {
+        EnemyTargetVisual visual = target.GetComponentInParent<EnemyTargetVisual>();
+        if (visual)
+        {
+            visual.SetTargetVisualActive(showVisual);
+        }
+    }
+    
+    
 
     private Transform GetClosestTarget()
     {
@@ -127,6 +159,8 @@ public class Tower : MonoBehaviour
         {
             health.OnDie.RemoveListener((gameObj) => { TryToRemoveTargetFromList(gameObj.transform); });
         }
+        
+        SetTargetVisual(_target, false);
 
         _target = null;
 

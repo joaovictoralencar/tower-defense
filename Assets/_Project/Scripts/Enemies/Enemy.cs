@@ -51,6 +51,13 @@ namespace Enemies
         private void OnEnable()
         {
             InitializeHPBar();
+            _health.OnTakeDamage.AddListener(HandleEnemyRecoil);
+        }
+
+        private void HandleEnemyRecoil(float damage)
+        {
+            if (_type != EnemyType.Runner)
+                _movement.StartEnemyRecoil();
         }
 
         private void InitializeHPBar()

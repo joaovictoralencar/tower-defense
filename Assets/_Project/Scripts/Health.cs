@@ -13,6 +13,7 @@ public class Health : MonoBehaviour
     /// float deltaChange, float healthBefore
     /// </summary>
     public UnityEvent<float, float> OnChangeHealth;
+    public UnityEvent<float> OnTakeDamage;
     public UnityEvent<Health> OnInitialize;
 
     public UnityEvent<float, float, bool> OnChangeMaxHealth;
@@ -50,6 +51,7 @@ public class Health : MonoBehaviour
     public void TakeDamage(float damage)
     {
         ChangeHealth(-Math.Abs(damage));
+        OnTakeDamage.Invoke(damage);
     }
 
     public void ChangeMaxHealth(float newMaxHealth, float current, bool healToMax = false)

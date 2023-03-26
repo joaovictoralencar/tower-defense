@@ -23,11 +23,12 @@ public class HPBar : MonoBehaviour
 
     private Camera _cam;
 
-    private bool worldSpace;
+    private bool _worldSpace;
+    [SerializeField] private bool _faceCamera;
 
     private void Start()
     {
-        worldSpace = GetComponent<Canvas>().renderMode == RenderMode.WorldSpace;
+        _worldSpace = GetComponent<Canvas>().renderMode == RenderMode.WorldSpace && _faceCamera;
 
         SetColors();
     }
@@ -47,7 +48,7 @@ public class HPBar : MonoBehaviour
 
     private void Update()
     {
-        if (!worldSpace) return;
+        if (!_worldSpace) return;
         if (_cam == null)
         {
             _cam = Camera.main;

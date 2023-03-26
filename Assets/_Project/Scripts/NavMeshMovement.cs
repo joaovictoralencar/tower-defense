@@ -8,7 +8,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class NavMeshMovement : MonoBehaviour
 {
-    private Transform _target;
+    private Vector3 _targetPoint;
     private NavMeshAgent _agent;
 
     void Awake()
@@ -24,11 +24,31 @@ public class NavMeshMovement : MonoBehaviour
         });
     }
 
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
+
+    public void StartEnemyRecoil()
+    {
+        if (!_agent.isOnNavMesh) return;
+        if (!gameObject.activeInHierarchy) return;
+        _agent.isStopped = true;
+        StartCoroutine(EndEnemyRecoilCoroutine());
+    }
+
+    IEnumerator EndEnemyRecoilCoroutine()
+    {
+        yield return new WaitForSeconds(.25f);
+        _agent.isStopped = false;
+    }
+
     public void SetDestination(Vector3 targetPoint)
     {
         _agent.Warp(transform.position);
         if (!_agent.isOnNavMesh) return;
-        _agent.destination = targetPoint;
+        _targetPoint = targetPoint;
+        _agent.destination = _targetPoint;
         _agent.isStopped = false;
     }
 
