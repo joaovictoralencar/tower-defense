@@ -1,4 +1,5 @@
 using System;
+using Cinemachine;
 using DG.Tweening;
 using Enemies;
 using ObjectPool;
@@ -40,6 +41,13 @@ namespace Singletons
 
         public ObjectPool<PlayerScoreChangeUI> DamageTextPool => _damageTextPool;
 
+        public CinemachineVirtualCamera MainVirtualCamera => _mainVirtualCamera;
+
+        public PlayerScore Coins => _coins;
+
+        [SerializeField] CinemachineVirtualCamera _mainVirtualCamera;
+
+
         private ObjectPool<PlayerScoreChangeUI> _pointsTextPool;
         private ObjectPool<PlayerScoreChangeUI> _coinsTextPool;
         private ObjectPool<PlayerScoreChangeUI> _defeatedTextPool;
@@ -49,7 +57,7 @@ namespace Singletons
 
         private void Start()
         {
-            DOTween.SetTweensCapacity(500, 50);
+            DOTween.SetTweensCapacity(500, 125);
             InitializePlayerScores();
             OnEnemyDie.AddListener(OnEnemyDieCallback);
         }
@@ -105,7 +113,7 @@ namespace Singletons
             score.Initialize();
             ObjectPool<PlayerScoreChangeUI> pool =
                 new ObjectPool<PlayerScoreChangeUI>(playerScoreChangeUI, 50, transform);
-            
+
             pool.OnObjectActivate += (scoreChangeUI) =>
             {
                 scoreChangeUI.OnComplete.AddListener(pool.DeactivateObject);
@@ -133,6 +141,14 @@ namespace Singletons
             _coins.AddScore(enemy.CoinsToGive);
             PlayerScoreChangeUI obj = _coinsTextPool.ActivateObject(enemy.ScoreUIPosition.position);
             obj.SetText("+" + enemy.CoinsToGive);
+            obj.Animate();
+        }
+
+        public void ReduceCoin(float reduceAmount)
+        {
+            _coins.ReduceScore(reduceAmount);
+            PlayerScoreChangeUI obj = _coinsTextPool.ActivateObject(_playerMainTower.ScoreGainPostion.position);
+            obj.SetText("-" + reduceAmount);
             obj.Animate();
         }
 

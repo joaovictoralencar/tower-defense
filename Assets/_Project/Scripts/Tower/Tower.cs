@@ -1,17 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Enemies;
 using UnityEngine;
 using ObjectPool;
 using Singletons;
+using UnityEngine.Events;
 using Utils;
 
 [RequireComponent(typeof(SphereCollider))]
 public class Tower : MonoBehaviour
 {
+    [Header("Reference Assign")] public GameObject GFX;
+    [SerializeField] private Transform _rangeTransform;
+
     [Header("Stats")] [SerializeField] private float _attackRange = 5;
     [SerializeField] private float _damage = 1;
     [SerializeField] private float _fireRate = 1;
+    [SerializeField] private float _rotationSpeed = 1;
     [Header("Shoot")] [SerializeField] private Transform _shootOrigin;
     [SerializeField] private LayerMask _targetLayer;
     [SerializeField] private Projectile _shootPrefab;
@@ -22,8 +28,10 @@ public class Tower : MonoBehaviour
     private float _fireRateCooldown;
     private ObjectPool<Projectile> _projectilePool;
     private Vector3 _targetPos;
-
+    public UnityEvent<Enemy, Projectile> OnShoot;
     private List<Transform> _allTargets = new List<Transform>();
+
+    public float AttackRange => _attackRange;
 
     protected virtual void Awake()
     {
@@ -43,6 +51,25 @@ public class Tower : MonoBehaviour
         HandleShoot();
     }
 
+    private void FixedUpdate()
+    {
+        FaceTarget();
+    }
+
+    public float tolerance = 0.1f; // tolerance value for comparison
+    private void FaceTarget()
+    {
+        if (_target)
+        {
+            Vector3 faceDirection = (_target.position - transform.position).normalized;
+            faceDirection.y = 0;
+            transform.forward = Vector3.Slerp(transform.forward, faceDirection, _rotationSpeed * Time.deltaTime);
+            if (Vector3.Dot(transform.forward, faceDirection) >= 1.0f - tolerance) _canAttack = true;
+            else _canAttack = false;
+        }
+    }
+    
+
     private IEnumerator CheckTargetCoroutine()
     {
         while (true)
@@ -51,7 +78,7 @@ public class Tower : MonoBehaviour
             yield return new WaitForSeconds(1);
         }
     }
-    
+
 
     //Main methods
     private void HandleShoot()
@@ -80,6 +107,7 @@ public class Tower : MonoBehaviour
         _targetPos = _target.position + (Vector3.up * .75f);
         projectile.Setup(_targetPos, _damage, _projectilePool);
         _fireRateCooldown = _fireRate;
+        OnShoot.Invoke(_target.GetComponent<Enemy>(), projectile);
         //TODO Play sound fx, instantiate MUZZLE vfx
     }
 
@@ -94,9 +122,10 @@ public class Tower : MonoBehaviour
     {
         _attackRange = newAttackRange;
         _rangeCollider.radius = newAttackRange;
+        if (_rangeTransform)
+            _rangeTransform.localScale = new Vector3(_attackRange, 1, _attackRange);
     }
-    
-    
+
 
     private void TryToSetTarget()
     {
@@ -114,7 +143,7 @@ public class Tower : MonoBehaviour
         }
 
         SetTargetVisual(_target, true);
-        
+
         Health health = _target.GetComponentInParent<Health>();
         if (health)
         {
@@ -130,8 +159,7 @@ public class Tower : MonoBehaviour
             visual.SetTargetVisualActive(showVisual);
         }
     }
-    
-    
+
 
     private Transform GetClosestTarget()
     {
@@ -159,7 +187,7 @@ public class Tower : MonoBehaviour
         {
             health.OnDie.RemoveListener((gameObj) => { TryToRemoveTargetFromList(gameObj.transform); });
         }
-        
+
         SetTargetVisual(_target, false);
 
         _target = null;
@@ -190,6 +218,15 @@ public class Tower : MonoBehaviour
 
         if (targetTransform == _target)
             ResetTarget(targetTransform.gameObject);
+    }
+
+    private void OnValidate()
+    {
+        if (_rangeCollider)
+        {
+            _rangeCollider.radius = _attackRange;
+            UpdateRange(_attackRange);
+        }
     }
 
     private void OnTriggerExit(Collider other)

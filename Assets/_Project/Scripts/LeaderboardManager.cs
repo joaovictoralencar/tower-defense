@@ -18,16 +18,16 @@ public class LeaderboardManager : MonoBehaviour
 
     public List<ScoreEntry> ScoreList => _scoreList;
 
-    private void OnPlayerDie(GameObject playerObj)
-    {
-        AddScore("Player", GameManager.Instance.Points.CurrentValue);
-    }
-
     void Start()
     {
         // load the leaderboard data from the JSON file
         LoadLeaderboard();
-        GameManager.Instance.OnPlayerDie.AddListener(OnPlayerDie);
+        GameManager.Instance.Points.OnChangeValue.AddListener(OnGainPoints);
+    }
+
+    private void OnGainPoints(float gain, float currentValue)
+    {
+        AddScore("Player", currentValue);
     }
 
     // adds a new score to the leaderboard
@@ -59,12 +59,12 @@ public class LeaderboardManager : MonoBehaviour
     // saves the current leaderboard data to the JSON file
     private void SaveLeaderboard()
     {
-        
         SaveData data = new SaveData();
         for (int i = 0; i < _scoreList.Count; i++)
         {
             data.ScoreList.Add(_scoreList[i]);
         }
+
         string json = JsonUtility.ToJson(data);
         File.WriteAllText(Application.persistentDataPath + _filePath, json);
     }
@@ -96,11 +96,13 @@ public class LeaderboardManager : MonoBehaviour
             Debug.Log((i + 1) + ". " + _scoreList[i].playerName + ": " + _scoreList[i].score);
         }
     }
+
     [System.Serializable]
     public class SaveData
     {
         public List<ScoreEntry> ScoreList = new List<ScoreEntry>();
     }
+
     // class to hold the score data
     [System.Serializable]
     public class ScoreEntry

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a95cd88c2b875846a342a04f565d846, type: 3}
+  m_Name: Regular Tower Defense Data
+  m_EditorClassIdentifier: 
+  defenseName: Regular Tower
+  defenseCost: 500
+  defenseDescription: A regular tower. Cheap and useful. Shoots the closest Enemy.
+  prefab: {fileID: 6689344756363441413, guid: cd8622ff21f3a1440bbef09108f6684a, type: 3}

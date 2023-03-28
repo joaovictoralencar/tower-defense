@@ -67,7 +67,6 @@ namespace Enemies
             if (_type != EnemyType.Runner)
                 _movement.StartEnemyRecoil();
 
-            Debug.Log("aaaaaaaaaaaaa");
             PlayerScoreChangeUI playerScoreChangeUI =
                 GameManager.Instance.DamageTextPool.ActivateObject(_hpBar.transform.position);
 

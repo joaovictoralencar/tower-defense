@@ -35,11 +35,11 @@ MonoBehaviour:
     m_Bits: 4294967295
   m_DefaultStencilState:
     overrideStencilState: 0
-    stencilReference: 1
+    stencilReference: 0
     stencilCompareFunction: 3
     passOperation: 1
     failOperation: 0
-    zFailOperation: 0
+    zFailOperation: 1
   m_ShadowTransparentReceive: 0
   m_RenderingMode: 0
   m_AccurateGbufferNormals: 0
@@ -53,11 +53,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
-  m_Name: target
+  m_Name: target Range
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    passTag: target
+    passTag: target Range
     Event: 500
     filterSettings:
       RenderQueueType: 1
@@ -72,11 +72,11 @@ MonoBehaviour:
     enableWrite: 1
     stencilSettings:
       overrideStencilState: 0
-      stencilReference: 0
+      stencilReference: 1
       stencilCompareFunction: 8
-      passOperation: 0
-      failOperation: 0
-      zFailOperation: 0
+      passOperation: 7
+      failOperation: 6
+      zFailOperation: 7
     cameraSettings:
       overrideCamera: 0
       restoreCamera: 1

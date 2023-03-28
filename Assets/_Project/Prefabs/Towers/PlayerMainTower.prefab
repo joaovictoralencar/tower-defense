@@ -222,6 +222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8abe6dfbfe5426742929540f5585b8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GFX: {fileID: 3894197494145503145}
+  _rangeTransform: {fileID: 3894197495777850346}
   _attackRange: 20
   _damage: 5
   _fireRate: 1
