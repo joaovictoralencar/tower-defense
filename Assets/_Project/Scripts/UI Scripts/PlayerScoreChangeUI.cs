@@ -20,7 +20,7 @@ public class PlayerScoreChangeUI : MonoBehaviour
 
     private void OnEnable()
     {
-        _sequence.SetAutoKill(false);
+        //_sequence.SetAutoKill(false);
         //Animate();
     }
 
@@ -45,8 +45,7 @@ public class PlayerScoreChangeUI : MonoBehaviour
         if (!right)
             endPos.x *= -1;
 
-        _sequence = _container.transform.DOLocalJump(newEndPos, jumpPower, 1, duration).OnComplete(OnCompleteAnimation)
-            .SetAutoKill(false);
+        _sequence = _container.transform.DOLocalJump(newEndPos, jumpPower, 1, duration).OnComplete(OnCompleteAnimation);
         _sequence.Insert(0, _container.transform.DOPunchScale(new Vector3(1.1f, 1.1f, 1.1f), duration, 0, 0));
         //_sequence.PrependInterval(duration / 2);
         _sequence.Insert(duration / 2, _container.DOFade(0, duration / 2));

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Singletons;
 using UnityEngine;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 
 public class DefenseShop : MonoBehaviour
 {
+    [SerializeField] private Button _shopButton;
     [SerializeField] private AllDefensesData _allDefenseData;
     [SerializeField] private DefenseUIData _shopDataBuyPrefab;
     [SerializeField] private RectTransform _shopDefenseHolder;
@@ -17,12 +19,15 @@ public class DefenseShop : MonoBehaviour
 
     private RectTransform _rt;
     private float _startYAnchorPos;
+    private float _startYAnchorPosOffset = 30f;
     private bool _buyingDefense;
+
+    private List<DefenseUIData> _defensedUIList = new List<DefenseUIData>();
 
     private void Start()
     {
         _rt = GetComponent<RectTransform>();
-        _startYAnchorPos = _rt.anchoredPosition.y - 30f;
+        _startYAnchorPos = _rt.anchoredPosition.y;
         InitializeStore();
         HideIsBuyingText();
     }
@@ -33,7 +38,9 @@ public class DefenseShop : MonoBehaviour
         {
             DefenseUIData defensedUI = Instantiate(_shopDataBuyPrefab, _shopDefenseHolder);
             defensedUI.UpdateUI(defenseData);
+            defensedUI.UpdateBuyingCost();
             defensedUI.OnSelect.AddListener(OnSelectDefense);
+            _defensedUIList.Add(defensedUI);
         }
 
         Canvas.ForceUpdateCanvases();
@@ -58,6 +65,15 @@ public class DefenseShop : MonoBehaviour
     {
         HideIsBuyingText();
         GameManager.Instance.ReduceCoin(defenseData.defenseCost);
+        {
+            for (int i = 0; i < _defensedUIList.Count; i++)
+            {
+                if (_defensedUIList[i].Data.defenseName == defenseData.defenseName)
+                {
+                    _defensedUIList[i].OnBuy.Invoke(defenseData);
+                }
+            }
+        }
     }
 
 
@@ -75,6 +91,18 @@ public class DefenseShop : MonoBehaviour
 
     public void CloseButton()
     {
-        _rt.DOAnchorPosY(-_rt.sizeDelta.y - _startYAnchorPos, .25f);
+        _rt.DOAnchorPosY(-_rt.sizeDelta.y - _startYAnchorPos - _startYAnchorPosOffset, .25f)
+            .OnComplete(() => ShowShopButton(true));
+    }
+
+    public void OpenShop()
+    {
+        ShowShopButton(false);
+        _rt.DOAnchorPosY(_startYAnchorPos, .25f);
+    }
+
+    void ShowShopButton(bool isActive)
+    {
+        _shopButton.gameObject.SetActive(isActive);
     }
 }

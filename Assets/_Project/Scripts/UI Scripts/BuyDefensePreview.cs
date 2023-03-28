@@ -10,18 +10,21 @@ using UnityEngine.Serialization;
 public class BuyDefensePreview : MonoBehaviour
 {
     public LayerMask _layerToCheck;
+    private Tower _towerPrefab;
     private Tower _tower;
     private GameObject _towerGFX;
     private Vector3 _mouseWorldPosition;
     private Vector3 _finalPosition;
     [SerializeField] private Transform _rangeTransform;
-    [HideInInspector] public UnityEvent<Tower> OnBuy;
-    [HideInInspector] public UnityEvent<Tower> OnCancel;
+    [HideInInspector] public UnityEvent<Tower> OnBuy = new UnityEvent<Tower>();
+    [HideInInspector] public UnityEvent<Tower> OnCancel = new UnityEvent<Tower>();
 
+    private DefenseData _defenseData;
 
     public void Initialize(DefenseData defenseData)
     {
-        _tower = defenseData.prefab;
+        _defenseData = defenseData;
+        _towerPrefab = defenseData.prefab;
         _towerGFX = Instantiate(defenseData.prefab.GFX, transform);
         _towerGFXRenders = _towerGFX.GetComponentsInChildren<Renderer>();
         _rangeTransform.localScale = new Vector3(defenseData.prefab.AttackRange, 1, defenseData.prefab.AttackRange);
@@ -76,6 +79,7 @@ public class BuyDefensePreview : MonoBehaviour
         if (_canPlaceTower && Input.GetMouseButtonDown(0))
         {
             BuyTower();
+            _towerGFX = null;
             return;
         }
 
@@ -87,11 +91,12 @@ public class BuyDefensePreview : MonoBehaviour
 
     private void BuyTower()
     {
-        _tower = Instantiate(_tower, _finalPosition, Quaternion.identity);
-        OnBuy.Invoke(_tower);
+        _tower = Instantiate(_towerPrefab, _finalPosition, Quaternion.identity);
+        _tower.UpgradeCost = _defenseData.defenseCost / 1.5f;
+        OnBuy?.Invoke(_tower);
         Destroy(gameObject);
     }
-    
+
     private void CancelBuy()
     {
         OnCancel.Invoke(_tower);

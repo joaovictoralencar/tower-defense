@@ -36,7 +36,7 @@ MonoBehaviour:
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
-    stencilCompareFunction: 3
+    stencilCompareFunction: 4
     passOperation: 1
     failOperation: 0
     zFailOperation: 1
@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: target Range
-    Event: 500
+    Event: 450
     filterSettings:
       RenderQueueType: 1
       LayerMask:
@@ -69,14 +69,14 @@ MonoBehaviour:
     overrideMaterialPassIndex: 0
     overrideDepthState: 1
     depthCompareFunction: 5
-    enableWrite: 1
+    enableWrite: 0
     stencilSettings:
       overrideStencilState: 0
-      stencilReference: 1
-      stencilCompareFunction: 8
-      passOperation: 7
-      failOperation: 6
-      zFailOperation: 7
+      stencilReference: 0
+      stencilCompareFunction: 5
+      passOperation: 2
+      failOperation: 2
+      zFailOperation: 2
     cameraSettings:
       overrideCamera: 0
       restoreCamera: 1

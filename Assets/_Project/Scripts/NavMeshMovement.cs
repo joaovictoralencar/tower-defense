@@ -29,17 +29,17 @@ public class NavMeshMovement : MonoBehaviour
         StopAllCoroutines();
     }
 
-    public void StartEnemyRecoil()
+    public void StartEnemyRecoil(float freezeTime)
     {
         if (!_agent.isOnNavMesh) return;
         if (!gameObject.activeInHierarchy) return;
         _agent.isStopped = true;
-        StartCoroutine(EndEnemyRecoilCoroutine());
+        StartCoroutine(EndEnemyRecoilCoroutine(freezeTime));
     }
 
-    IEnumerator EndEnemyRecoilCoroutine()
+    IEnumerator EndEnemyRecoilCoroutine(float freezeTime)
     {
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSeconds(freezeTime);
         _agent.isStopped = false;
     }
 

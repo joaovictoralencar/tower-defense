@@ -64,9 +64,6 @@ namespace Enemies
 
         private void OnTakeDamage(float damage)
         {
-            if (_type != EnemyType.Runner)
-                _movement.StartEnemyRecoil();
-
             PlayerScoreChangeUI playerScoreChangeUI =
                 GameManager.Instance.DamageTextPool.ActivateObject(_hpBar.transform.position);
 

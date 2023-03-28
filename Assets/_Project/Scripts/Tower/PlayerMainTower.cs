@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 public class PlayerMainTower : Tower
 {
+    [SerializeField] private float _initialUpgradeCost; 
     private Health _health;
     public Transform ScoreGainPostion;
 
@@ -22,6 +23,7 @@ public class PlayerMainTower : Tower
         base.Awake();
         _health = GetComponent<Health>();
         _health.OnDie.AddListener(OnDie);
+        UpgradeCost = _initialUpgradeCost;
     }
 
     protected override void Start()

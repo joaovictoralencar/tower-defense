@@ -5,7 +5,9 @@ using Enemies;
 using UnityEngine;
 using ObjectPool;
 using Singletons;
+using TMPro;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using Utils;
 
 [RequireComponent(typeof(SphereCollider))]
@@ -13,6 +15,14 @@ public class Tower : MonoBehaviour
 {
     [Header("Reference Assign")] public GameObject GFX;
     [SerializeField] private Transform _rangeTransform;
+    [SerializeField] private Button _upgradeButton;
+    [SerializeField] private TextMeshProUGUI _upgradeCostText;
+    [SerializeField] private TextMeshProUGUI _upgradeLevelText;
+
+    [Header("Upgrade")] [SerializeField] private float _rangeUpgradeMultiplier = 1.15f;
+    [SerializeField] private float _damageUpgradeMultiplier = 1.25f;
+    [SerializeField] private float _fireRateUpgradeMultiplier = 1.25f;
+    [SerializeField] private float _costUpgradeMultiplier = 1.8f;
 
     [Header("Stats")] [SerializeField] private float _attackRange = 5;
     [SerializeField] private float _damage = 1;
@@ -30,6 +40,8 @@ public class Tower : MonoBehaviour
     private Vector3 _targetPos;
     public UnityEvent<Enemy, Projectile> OnShoot;
     private List<Transform> _allTargets = new List<Transform>();
+    private int _level = 1;
+    public float UpgradeCost { get; set; }
 
     public float AttackRange => _attackRange;
 
@@ -57,6 +69,7 @@ public class Tower : MonoBehaviour
     }
 
     public float tolerance = 0.1f; // tolerance value for comparison
+
     private void FaceTarget()
     {
         if (_target)
@@ -68,7 +81,35 @@ public class Tower : MonoBehaviour
             else _canAttack = false;
         }
     }
-    
+
+    public void UpgradeTower()
+    {
+        GameManager.Instance.Coins.ReduceScore(UpgradeCost);
+        UpdateRange(_attackRange *= _rangeUpgradeMultiplier);
+        _damage *= _damageUpgradeMultiplier;
+        _fireRate *= _fireRateUpgradeMultiplier;
+
+        UpgradeCost *= _costUpgradeMultiplier;
+        _upgradeCostText.text = UpgradeCost.ToString();
+        _level++;
+        _upgradeLevelText.text = "Lv " + _level + " Upgrade";
+    }
+
+    private void UpdateUpgradeButton(float changeValue, float currentMoney)
+    {
+        if (_upgradeButton == null) return;
+        //Disable button
+        _upgradeButton.interactable = currentMoney >= UpgradeCost;
+
+
+        if (_upgradeCostText)
+            _upgradeCostText.text = UpgradeCost.ToString();
+        if (_upgradeLevelText)
+            _upgradeLevelText.text = "Lv " + _level + " Upgrade";
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_upgradeCostText.rectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_upgradeLevelText.rectTransform);
+    }
 
     private IEnumerator CheckTargetCoroutine()
     {
@@ -116,6 +157,8 @@ public class Tower : MonoBehaviour
     {
         UpdateRange(_attackRange);
         _projectilePool = new ObjectPool<Projectile>(_shootPrefab, 20, _shootOrigin);
+        GameManager.Instance.Coins.OnChangeValue.AddListener(UpdateUpgradeButton);
+        UpdateUpgradeButton(0, GameManager.Instance.Coins.CurrentValue);
     }
 
     private void UpdateRange(float newAttackRange)

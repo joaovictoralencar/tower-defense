@@ -13,9 +13,10 @@ public class ArrowTarget : MonoBehaviour
 
     void Start()
     {
-        _startPos = _targetImage.anchoredPosition;
-        _endPos = _startPos + (Vector2.down * .25f);
-
-        _targetImage.DOPunchAnchorPos(_endPos, .5f, 2, 0).SetLoops(-1);
+        // _startPos = _targetImage.anchoredPosition;
+        // _endPos = _startPos + (Vector2.down * .25f);
+        //
+        // _targetImage.DOPunchAnchorPos(_endPos, .5f, 2, 0).SetLoops(-1);
     }
+    
 }

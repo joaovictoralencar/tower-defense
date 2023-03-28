@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defenseName: Freeze Tower
   defenseCost: 1000
-  defenseDescription: A regular tower. Cheap and useful. Shoots the closest Enemy.
-  prefab: {fileID: 0}
+  defenseDescription: Shoots a freezing projectile that freezes any enemy.
+  prefab: {fileID: 1493913160030162591, guid: a54372f30400879478d108ab8a790956, type: 3}

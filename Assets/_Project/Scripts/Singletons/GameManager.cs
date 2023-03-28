@@ -57,7 +57,7 @@ namespace Singletons
 
         private void Start()
         {
-            DOTween.SetTweensCapacity(500, 125);
+            DOTween.SetTweensCapacity(500, 400);
             InitializePlayerScores();
             OnEnemyDie.AddListener(OnEnemyDieCallback);
         }

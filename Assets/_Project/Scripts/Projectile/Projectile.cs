@@ -7,10 +7,14 @@ using ObjectPool;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float _speed = 10;
-
+    public float _areaDamageRange = 5;
+    public float _freezeTime = 2;
+    [SerializeField] private bool _freeze;
+    [SerializeField] private bool _areaDamage;
     private ObjectPool<Projectile> _ownerPool;
     private Vector3 _targetDirection;
     private float _damage;
+
 
     private void FixedUpdate()
     {
@@ -47,14 +51,37 @@ public class Projectile : MonoBehaviour
     {
         //Avoid triggers
         if (collision.collider.isTrigger) return;
-        
-        Health health = collision.gameObject.GetComponentInParent<Health>();
-        if (health)
+
+        if (_areaDamage)
         {
-            health.TakeDamage(_damage);
+            Collider[] hitColliders = Physics.OverlapSphere(collision.GetContact(0).point, _areaDamageRange);
+            foreach (var col in hitColliders)
+            {
+                DealDamage(col.gameObject);
+            }
+        }
+        else if (_freeze)
+        {
+            NavMeshMovement movement = collision.collider.GetComponent<NavMeshMovement>();
+            if (movement)
+                movement.StartEnemyRecoil(_freezeTime);
+            DealDamage(collision.gameObject);
+        }
+        else
+        {
+            DealDamage(collision.gameObject);
         }
 
         OnHit();
         KillProjectile();
+    }
+
+    void DealDamage(GameObject gameObj)
+    {
+        Health health = gameObj.GetComponentInParent<Health>();
+        if (health)
+        {
+            health.TakeDamage(_damage);
+        }
     }
 }
