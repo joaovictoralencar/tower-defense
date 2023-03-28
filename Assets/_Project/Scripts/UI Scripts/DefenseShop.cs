@@ -45,7 +45,13 @@ public class DefenseShop : MonoBehaviour
         BuyDefensePreview preview = Instantiate(_buyDefensePreviewPrefab);
         preview.Initialize(defenseData);
         preview.OnBuy.AddListener((tower) => OnBuyTower(tower, defenseData));
+        preview.OnCancel.AddListener(OnCancelBuy);
         ShowIsBuyingText();
+    }
+
+    private void OnCancelBuy(Tower arg0)
+    {
+        HideIsBuyingText();
     }
 
     private void OnBuyTower(Tower tower, DefenseData defenseData)

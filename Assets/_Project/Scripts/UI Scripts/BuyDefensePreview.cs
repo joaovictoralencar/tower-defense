@@ -16,6 +16,7 @@ public class BuyDefensePreview : MonoBehaviour
     private Vector3 _finalPosition;
     [SerializeField] private Transform _rangeTransform;
     [HideInInspector] public UnityEvent<Tower> OnBuy;
+    [HideInInspector] public UnityEvent<Tower> OnCancel;
 
 
     public void Initialize(DefenseData defenseData)
@@ -75,14 +76,26 @@ public class BuyDefensePreview : MonoBehaviour
         if (_canPlaceTower && Input.GetMouseButtonDown(0))
         {
             BuyTower();
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            CancelBuy();
         }
     }
 
     private void BuyTower()
     {
-        Destroy(_towerGFX);
         _tower = Instantiate(_tower, _finalPosition, Quaternion.identity);
         OnBuy.Invoke(_tower);
+        Destroy(gameObject);
+    }
+    
+    private void CancelBuy()
+    {
+        OnCancel.Invoke(_tower);
+        Destroy(gameObject);
     }
 
     private bool _canPlaceTower;
