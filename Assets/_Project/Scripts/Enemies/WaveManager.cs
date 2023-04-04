@@ -21,7 +21,7 @@ public class WaveManager : MonoBehaviour
 
     private int _currentEnemies; // Current number of enemies
     private float _timeElapsed; // Time elapsed since the start of the game
-    private float _spawnCooldown = 0;
+    private float _spawnCooldown;
     private int _numEnemiesToSpawn;
     private int _numSpawnedEnemies;
     private int _defeatedPerWave;
@@ -42,8 +42,6 @@ public class WaveManager : MonoBehaviour
         _undefeatedCount--;
         _defeatedPerWave++;
         _enemiesPerWave.SetScore(_defeatedPerWave);
-
-        if (_undefeatedCount == 0) ForceEndWave();
     }
 
     private void Update()
@@ -53,7 +51,7 @@ public class WaveManager : MonoBehaviour
         //Debug only
         if (Input.GetKeyDown(KeyCode.T))
         {
-            SpawnEnemies();
+            _spawnCooldown = 0;
         }
     }
 
@@ -108,13 +106,5 @@ public class WaveManager : MonoBehaviour
 
         OnStartWave();
         _undefeatedCount += _numSpawnedEnemies;
-        //End wave, wait until player defeats all enemies
-        //if (_enemiesPerWave.CurrentValue >= _enemiesPerWave.MaxValue) ForceEndWave();
-    }
-
-    void ForceEndWave()
-    {
-        // _defeatedPerWave = 0;
-        // _spawnCooldown = 0;
     }
 }

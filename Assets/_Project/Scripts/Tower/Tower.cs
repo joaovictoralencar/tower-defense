@@ -56,6 +56,7 @@ public class Tower : MonoBehaviour
     {
         InitializeTower();
         StartCoroutine(CheckTargetCoroutine());
+        _canAttack = false;
     }
 
     protected virtual void Update()

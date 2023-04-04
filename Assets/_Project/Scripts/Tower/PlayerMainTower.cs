@@ -24,13 +24,10 @@ public class PlayerMainTower : Tower
         _health = GetComponent<Health>();
         _health.OnDie.AddListener(OnDie);
         UpgradeCost = _initialUpgradeCost;
-    }
-
-    protected override void Start()
-    {
-        base.Start();
         GameManager.Instance.OnGenerateGrid.AddListener((start, end) => SetMainTowerPosition(end));
     }
+
+
 
     void SetMainTowerPosition(Vector3 pos)
     {

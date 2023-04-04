@@ -33,8 +33,6 @@ public class GridManager : MonoBehaviour
     {
         int startX = Random.Range(borderThickness, width - borderThickness);
         int endX = Random.Range(borderThickness, width - borderThickness);
-        //int startY = Random.Range(borderThickness, height - borderThickness);
-        //int endY = Random.Range(borderThickness, height - borderThickness);
 
         startPosition = new Vector3(
             originTransform.position.x + startX * tileWidth,

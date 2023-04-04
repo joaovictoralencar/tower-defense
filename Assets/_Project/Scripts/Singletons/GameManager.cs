@@ -62,6 +62,11 @@ namespace Singletons
             OnEnemyDie.AddListener(OnEnemyDieCallback);
         }
 
+        public void CloseGame()
+        {
+            Application.Quit();
+        }
+
         private void Update()
         {
             Time.timeScale = timeScale;
